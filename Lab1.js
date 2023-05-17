@@ -22,3 +22,19 @@ function areAnagrams(stringA, stringB) {
 
 console.log(areAnagrams('shoman', 'hmanos')); // True
 console.log(areAnagrams('anagram', 'alagram')); // False
+
+
+function deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+let original = { a: 1, b: { c: 2 } };
+let clone = deepClone(original);
+
+console.log(clone); // { a: 1, b: { c: 2 } }
+
+original.a = 10;
+original.b.c = 20;
+
+console.log(original); // { a: 10, b: { c: 20 } }
+console.log(clone); // { a: 1, b: { c: 2 } }
