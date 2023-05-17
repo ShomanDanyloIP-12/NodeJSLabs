@@ -38,3 +38,27 @@ original.b.c = 20;
 
 console.log(original); // { a: 10, b: { c: 20 } }
 console.log(clone); // { a: 1, b: { c: 2 } }
+
+function cache(func) {
+    const cache = new Map();
+
+    return (...args) => {
+        const key = JSON.stringify(args);
+        if (cache.has(key)) {
+            console.log(`Getting from cache: ${key}`);
+            return cache.get(key);
+        } else {
+            console.log(`Calculating result for: ${key}`);
+            const result = func(...args);
+            cache.set(key, result);
+            return result;
+        }
+    };
+}
+
+const calc = (a, b, c) => a + b + c;
+const cachedCalc = cache(calc);
+
+console.log(cachedCalc(2,2,3)); // 7
+console.log(cachedCalc(5,8,1)); // 14
+console.log(cachedCalc(2,2,3)); // 7 - from cache
