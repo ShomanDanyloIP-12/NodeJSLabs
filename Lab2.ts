@@ -22,3 +22,30 @@ function areAnagrams(s1: string, s2: string): boolean {
 
 console.log(areAnagrams('shoman', 'hmanos'));  // true
 console.log(areAnagrams('anagram', 'alagram'));  // false
+
+type UnknownObject = { [key: string]: unknown };
+
+function deepClone(obj: UnknownObject): UnknownObject {
+    const clone: UnknownObject = {};
+
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            const value = obj[key];
+            clone[key] = (typeof value === "object" && value !== null) ? deepClone(value as UnknownObject) : value;
+        }
+    }
+
+    return clone;
+}
+
+const obj1 = {a: 1, b: {c: 2, d: {e: 3}}};
+const clonedObj1 = deepClone(obj1);
+console.log(clonedObj1); // {a: 1, b: {c: 2, d: {e: 3}}}
+
+const obj2 = {x: "Shoman", y: ["Danylo", "IP-12"], z: {p: "clone"}};
+const clonedObj2 = deepClone(obj2);
+console.log(clonedObj2); // {x: "Shoman", y: ["Danylo", "IP-12"], z: {p: "clone"}}
+
+const obj3 = {name: "Danylo", details: {work: "student", group_number: 12}};
+const clonedObj3 = deepClone(obj3);
+console.log(clonedObj3); // {name: "Danylo", details: {work: "student", group_number: 12}}
