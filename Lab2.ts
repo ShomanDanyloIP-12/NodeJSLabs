@@ -49,3 +49,33 @@ console.log(clonedObj2); // {x: "Shoman", y: ["Danylo", "IP-12"], z: {p: "clone"
 const obj3 = {name: "Danylo", details: {work: "student", group_number: 12}};
 const clonedObj3 = deepClone(obj3);
 console.log(clonedObj3); // {name: "Danylo", details: {work: "student", group_number: 12}}
+
+type FunctionToWrap = (...args: number[]) => number;
+
+function wrapper(fn: FunctionToWrap): FunctionToWrap {
+    const cache = new Map<string, number>();
+    
+    return (...args: number[]) => {
+        const key = JSON.stringify(args);
+        
+        if (cache.has(key)) {
+            const cachedResult = cache.get(key);
+            if (typeof cachedResult === 'number') {
+                console.log(`${cachedResult} from cache`);
+                return cachedResult;
+            }
+        }
+        
+        const result = fn(...args);
+        cache.set(key, result);
+        console.log(`${result} calculated`);
+        return result;
+    };
+}
+
+const fadd = (...args: number[]) => args.reduce((a, b) => a + b, 0);
+const cachedAdd = wrapper(fadd);
+
+console.log(cachedAdd(2,2,3)); // 7
+console.log(cachedAdd(5,8,1)); // 14
+console.log(cachedAdd(2,2,3)); // 7 from cache
