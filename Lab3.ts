@@ -126,7 +126,6 @@ async function printSystemInfo(frequencyInSeconds: number) {
   }, frequencyInSeconds * 1000);
 }
 
-// Read command-line arguments
 const frequencyInSeconds = +process.argv[2];
 
 if (!frequencyInSeconds || isNaN(frequencyInSeconds)) {
@@ -137,4 +136,29 @@ if (!frequencyInSeconds || isNaN(frequencyInSeconds)) {
 printSystemInfo(frequencyInSeconds);
 
 
+type Handler = () => void;
 
+class MyEventEmitter {
+  private eventHandlers: Record<string, Handler[]> = {};
+
+  registerHandler(eventName: string, handler: Handler): void {
+    if (!this.eventHandlers[eventName]) {
+      this.eventHandlers[eventName] = [];
+    }
+    this.eventHandlers[eventName].push(handler);
+  }
+
+  emitEvent(eventName: string): void {
+    const handlers = this.eventHandlers[eventName];
+    if (handlers) {
+      handlers.forEach((handler) => handler());
+    }
+  }
+}
+
+
+const emitter = new MyEventEmitter();
+
+emitter.registerHandler('userUpdated', () => console.log('Обліковий запис користувача оновлено'));
+
+emitter.emitEvent('userUpdated'); //Обліковий запис користувача оновлено
