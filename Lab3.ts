@@ -80,3 +80,61 @@ async function processJSONFile(jsonFilePath: string) {
 const jsonFilePath = path.join(__dirname, 'list.json');
 
 processJSONFile(jsonFilePath);
+
+
+import * as si from 'systeminformation';
+import * as os from 'os';
+
+async function printSystemInfo(frequencyInSeconds: number) {
+  setInterval(async () => {
+    try {
+      const osInfo = await si.osInfo();
+      const cpuTemperature = await si.cpuTemperature();
+      const cpuInfo = await si.cpu();
+      const graphicsInfo = await si.graphics();
+      const memoryInfo = await si.mem();
+      const batteryInfo = await si.battery();
+
+      const currentUsername = os.userInfo().username;
+
+      console.log('Operating System:', osInfo.distro);
+      console.log('Architecture:', osInfo.arch);
+      console.log('Current User Name:', currentUsername);
+      console.log('Total CPU Cores:', cpuInfo.cores);
+      console.log('CPU Temperature:', cpuTemperature.main);
+
+      console.log('Graphics Controllers:');
+      graphicsInfo.controllers.forEach((controller) => {
+        console.log('Vendor:', controller.vendor);
+        console.log('Model:', controller.model);
+      });
+
+      console.log('Memory:');
+      console.log('Total Memory (GB):', Math.floor(memoryInfo.total / 1024 / 1024 / 1024));
+      console.log('Used Memory (GB):', Math.floor(memoryInfo.used / 1024 / 1024 / 1024));
+      console.log('Free Memory (GB):', Math.floor(memoryInfo.free / 1024 / 1024 / 1024));
+
+      console.log('Battery:');
+      console.log('Charging:', batteryInfo.isCharging);
+      console.log('Percent:', batteryInfo.percent);
+      console.log('Remaining Time:', batteryInfo.timeRemaining);
+
+      console.log('----------------------------------------');
+    } catch (error) {
+      console.error('An error occurred while fetching system information:', error);
+    }
+  }, frequencyInSeconds * 1000);
+}
+
+// Read command-line arguments
+const frequencyInSeconds = +process.argv[2];
+
+if (!frequencyInSeconds || isNaN(frequencyInSeconds)) {
+  console.error('Please provide a valid frequency in seconds as a command-line argument.');
+  process.exit(1);
+}
+
+printSystemInfo(frequencyInSeconds);
+
+
+
